@@ -6,6 +6,7 @@ export const AuthProtect = async (req, res, next) => {
   let token = req.headers.authorization;
   if (token && token.startsWith("Bearer")) {
     try {
+      token = token.split(' ')[1];
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
       req.user = await User.findById(decoded.id).select("-password");
       if (!req.user) {
@@ -28,6 +29,6 @@ export const AdminAuthProtect = (req, res, next) => {
   } else {
     return res
       .status(403)
-      .json({ message: "Forbidden, admin access required" });
+      .json({ message: "Not authorized Forbidden, admin access required" });
   }
 };
