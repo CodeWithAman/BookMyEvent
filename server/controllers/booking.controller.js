@@ -4,24 +4,22 @@ import Event from "../models/event.model.js";
 import { SendOTPEmail, SendBookingEmail } from "../utils/email.service.js";
 
 const genOTP = () => {
-  Math.floor(100000 + Math.random() * 900000).toString();
+  return Math.floor(100000 + Math.random() * 900000).toString();
 };
 
-export const SendBookingOTP = async (res, req) => {
+export const SendBookingOTP = async (req, res) => {
   try {
     const otp = genOTP();
     await OTP.findOneAndDelete({
       email: req.user.email,
-      action: "event_booking",
+      action: "eventBooking",
     });
-    await OTP.create({ email: req.user.email, otp, action: "event_booking" });
-    await SendOTPEmail(req.user.email, otp, "event_booking");
+    await OTP.create({ email: req.user.email, otp, action: "eventBooking" });
+    await SendOTPEmail(req.user.email, otp, "eventBooking");
 
     res.json({ message: "OTP Sent Successfully" });
   } catch (error) {
-    res
-      .status(500)
-      .json({ message: "Error sending OTP", error: error.message });
+    res.status(500).json({ message: "Error sending OTP", error: error.message });
   }
 };
 
@@ -33,7 +31,7 @@ export const BookEvent = async (req, res) => {
     const validOTP = await OTP.findOne({
       email: req.user.email,
       otp,
-      action: "event_booking",
+      action: "eventBooking",
     });
     if (!validOTP) {
       return res
