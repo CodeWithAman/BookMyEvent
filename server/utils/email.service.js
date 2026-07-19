@@ -11,7 +11,27 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-export const sendOTPEmail = async (userEmail, otp, type) => {
+export const SendBookingEmail = async (userEmail, userName, eventTitle) => {
+  try {
+    const mailOptions = {
+      from: process.env.EMAIL_USER,
+      to: userEmail,
+      subject: `Booking Confirmed: ${eventTitle}`,
+      html: `
+        <h2>Hi ${userName}!</h2>
+        <p>Your booking for the event <strong>${eventTitle}</strong> is successfully confirmed.</p>
+        <p>Thank you for choosing BookMyEvent.</p>
+      `,
+    };
+
+    await transporter.sendMail(mailOptions);
+    console.log("Email Sent Successfully to", userEmail);
+  } catch (error) {
+    console.error("Error sending email:", error);
+  }
+};
+
+export const SendOTPEmail = async (userEmail, otp, type) => {
   try {
     const title =
       type === "accountVerification"
@@ -42,25 +62,5 @@ export const sendOTPEmail = async (userEmail, otp, type) => {
     console.log(`OTP email sent to ${userEmail} for ${type}`);
   } catch (error) {
     console.error("Error sending OTP email:", error);
-  }
-};
-
-export const sendBookingEmail = async (userEmail, userName, eventTitle) => {
-  try {
-    const mailOptions = {
-      from: process.env.EMAIL_USER,
-      to: userEmail,
-      subject: `Booking Confirmed: ${eventTitle}`,
-      html: `
-        <h2>Hi ${userName}!</h2>
-        <p>Your booking for the event <strong>${eventTitle}</strong> is successfully confirmed.</p>
-        <p>Thank you for choosing BookMyEvent.</p>
-      `,
-    };
-
-    await transporter.sendMail(mailOptions);
-    console.log("Email Sent Successfully to", userEmail);
-  } catch (error) {
-    console.error("Error sending email:", error);
   }
 };
