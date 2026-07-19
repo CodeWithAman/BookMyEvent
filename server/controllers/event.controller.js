@@ -8,13 +8,16 @@ export const GetAllEvents = async (req, res) => {
       filters.category = req.query.category;
     }
     if (req.query.search) {
-      filters.search = { $regex: req.query.search, $options: "i" };
+      filters.title = { $regex: req.query.search, $options: "i" };
     }
 
-    const events = await Event.find(filters);
+    const events = await Event.find(filters).populate(
+      "createdBy",
+      "name email",
+    );
     res.json(events);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    res.status(500).json({ message: "Server Error", error: error.message });
   }
 };
 
@@ -54,6 +57,7 @@ export const CreateEvent = async (req, res) => {
       date,
       location,
       category,
+      totalSeats,
       availableSeats: totalSeats,
       ticketPrice: ticketPrice || 0,
       image: image || "",

@@ -1,7 +1,7 @@
 import Booking from "../models/booking.model.js";
 import OTP from "../models/otp.model.js";
 import Event from "../models/event.model.js";
-import { sendOTPEmail, sendBookingEmail } from "../utils/email.service.js";
+import { SendOTPEmail, SendBookingEmail } from "../utils/email.service.js";
 
 const genOTP = () => {
   Math.floor(100000 + Math.random() * 900000).toString();
@@ -15,7 +15,7 @@ export const SendBookingOTP = async (res, req) => {
       action: "event_booking",
     });
     await OTP.create({ email: req.user.email, otp, action: "event_booking" });
-    await sendOTPEmail(req.user.email, otp, "event_booking");
+    await SendOTPEmail(req.user.email, otp, "event_booking");
 
     res.json({ message: "OTP Sent Successfully" });
   } catch (error) {
@@ -101,7 +101,7 @@ export const ConfirmBooking = async (req, res) => {
     await event.save();
 
     // Send email on admin confirmation
-    await sendBookingEmail(
+    await SendBookingEmail(
       booking.userId.email,
       booking.userId.name,
       booking.eventId.title,
