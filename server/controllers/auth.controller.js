@@ -92,15 +92,21 @@ export const VerifyOTP = async (req, res) => {
   try {
     const { email, otp } = req.body;
 
-    const vaildOTP = await OTP.findOne({ email, otp, action: 'accountVerification' });
+    const vaildOTP = await OTP.findOne({
+      email,
+      otp,
+      action: "accountVerification",
+    });
     if (!vaildOTP) {
-      return res
-        .status(400)
-        .json({ message: "Invalid or Expired OTP" });
+      return res.status(400).json({ message: "Invalid or Expired OTP" });
     }
 
-    const user = await User.findOneAndUpdate({email} , {isVerified: true}, {new: true})
-    await OTP.deleteOne({_id: vaildOTP._id})
+    const user = await User.findOneAndUpdate(
+      { email },
+      { isVerified: true },
+      { new: true },
+    );
+    await OTP.deleteOne({ _id: vaildOTP._id });
 
     res.json({
       _id: user._id,

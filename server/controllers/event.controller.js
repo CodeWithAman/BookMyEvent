@@ -81,15 +81,15 @@ export const UpdateEvent = async (req, res) => {
   }
 };
 
-// Delete Event 
-export const DeleteEvent = async (res, req) =>{
+// Delete Event
+export const DeleteEvent = async (res, req) => {
   try {
     const event = await Event.findByIdAndDelete(req.params.id);
     if (!event) {
       return res.status(404).json({ message: "Event not Found" });
     }
-    res.json({message: 'Event Delated Successfully'});
+    res.json({ message: "Event Delated Successfully" });
   } catch (error) {
-     res.status(500).json({ message: "Server Error", error: error.message });
+    res.status(500).json({ message: "Server Error", error: error.message });
   }
-}
+};
