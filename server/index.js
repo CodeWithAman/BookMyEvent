@@ -6,8 +6,8 @@ dotenv.config();
 import cors from "cors";
 import mongoose from "mongoose";
 import AuthRoutes from "./routes/auth.route.js"
-import EventRoutes from "./routes/auth.route.js"
-import BookingRoutes from "./routes/auth.route.js"
+import EventRoutes from "./routes/events.route.js"
+import BookingRoutes from "./routes/bookings.route.js"
 
 const app = express();
 app.use(cors());

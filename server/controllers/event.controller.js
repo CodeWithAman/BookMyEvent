@@ -1,0 +1,95 @@
+import Event from "../models/event.model.js";
+
+// Get All Event
+export const GetAllEvents = async (req, res) => {
+  try {
+    const filters = {};
+    if (req.query.category) {
+      filters.category = req.query.category;
+    }
+    if (req.query.search) {
+      filters.search = { $regex: req.query.search, $options: "i" };
+    }
+
+    const events = await Event.find(filters);
+    res.json(events);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+// Get Event By Id
+export const GetEventById = async (req, res) => {
+  try {
+    const event = await Event.findById(req.params.id).populate(
+      "createdBy",
+      "name email",
+    );
+    if (!event) {
+      return res.status(404).json({ message: "Event not found" });
+    }
+    res.json(event);
+  } catch (error) {
+    res.status(500).json({ message: "Server Error", error: error.message });
+  }
+};
+
+// Create Event
+export const CreateEvent = async (req, res) => {
+  try {
+    const {
+      title,
+      description,
+      date,
+      location,
+      category,
+      totalSeats,
+      ticketPrice,
+      image,
+    } = req.body;
+
+    const event = await Event.create({
+      title,
+      description,
+      date,
+      location,
+      category,
+      availableSeats: totalSeats,
+      ticketPrice: ticketPrice || 0,
+      image: image || "",
+      createdBy: req.user.id,
+    });
+
+    res.status(201).json(event);
+  } catch (error) {
+    res.status(500).json({ message: "Server Error", error: error.message });
+  }
+};
+
+// Update Event
+export const UpdateEvent = async (req, res) => {
+  try {
+    const event = await Event.findByIdAndUpdate(req.params.id, req.body, {
+      new: true,
+    });
+    if (!event) {
+      return res.status(404).json({ message: "Event not Found" });
+    }
+    res.json(event);
+  } catch (error) {
+    res.status(500).json({ message: "Server Error", error: error.message });
+  }
+};
+
+// Delete Event 
+export const DeleteEvent = async (res, req) =>{
+  try {
+    const event = await Event.findByIdAndDelete(req.params.id);
+    if (!event) {
+      return res.status(404).json({ message: "Event not Found" });
+    }
+    res.json({message: 'Event Delated Successfully'});
+  } catch (error) {
+     res.status(500).json({ message: "Server Error", error: error.message });
+  }
+}
